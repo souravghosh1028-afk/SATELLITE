@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Satellite Housing — Civil Design & Drafting</title>
+<style>
+  :root{
+    --bg1:#0f2a33;         /* deep blueprint teal */
+    --bg2:#163a44;         /* darker */
+    --panel:rgba(255,255,255,0.04);
+    --panel-2:rgba(255,255,255,0.03);
+    --muted:#bcd7db;
+    --accent1:#00c29a;     /* vibrant teal */
+    --accent2:#0093d0;     /* blueprint blue */
+    --glass: rgba(255,255,255,0.03);
+    --card-radius:14px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.45);
+    --mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--muted);-webkit-font-smoothing:antialiased}
+  a{color:var(--accent1)}
+  img{display:block;max-width:100%}
+
+  /* subtle blueprint grid background */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 28px 28px, 28px 28px;
+    opacity:0.18;
+    pointer-events:none;
+  }
+
+  header{
+    position:fixed;left:0;right:0;top:0;z-index:60;
+    display:flex;align-items:center;justify-content:space-between;padding:12px 22px;background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.2));
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.02);
+  }
+  .brand{display:flex;align-items:center;gap:12px;z-index:70}
+  .brand img{height:56px;width:56px;object-fit:contain;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
+  .brand .texts{line-height:1}
+  .brand .title{font-weight:800;color:var(--accent1);font-size:16px}
+  .brand .subtitle{font-size:12px;color:var(--muted)}
+
+  nav{display:flex;gap:12px;align-items:center}
+  nav a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:600}
+  nav a:hover{background:rgba(255,255,255,0.02);color:var(--accent2)}
+
+  .controls{display:flex;gap:10px;align-items:center}
+  .btn{
+    padding:10px 16px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    color:#fff;border:none;font-weight:800;cursor:pointer;box-shadow:var(--shadow)
+  }
+  .btn-ghost{padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--muted);cursor:pointer}
+
+  main{position:relative;z-index:20;max-width:1100px;margin:110px auto 80px;padding:0 20px}
+
+  /* Hero */
+  .hero{
+    display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(255,255,255,0.02));box-shadow:var(--shadow);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  .hero h1{margin:0;font-size:32px;color:var(--accent1);line-height:1.02}
+  .hero p{margin:10px 0 0;color:var(--muted);max-width:56ch}
+  .hero .cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+  .hero .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+
+  /* Sections */
+  section{margin-top:28px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 8px 30px rgba(0,0,0,0.35)}
+  .muted{color:var(--muted)}
+  .small{font-size:13px;color:var(--muted)}
+  h2.section-title{color:var(--accent2);margin:0 0 12px;font-size:20px}
+
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .feature{padding:16px;border-radius:10px;background:rgba(0,0,0,0.06);border:1px dashed rgba(255,255,255,0.02)}
+
+  label{display:block;font-weight:700;color:var(--muted);margin-bottom:6px}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--muted);font-size:14px}
+  input[disabled], textarea[disabled]{opacity:0.8;color:var(--muted)}
+  .row{display:flex;gap:12px}
+  .row .col{flex:1}
+
+  .projects-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:12px}
+  .project-item{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+  .project-item img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:8px}
+
+  footer{margin-top:48px;padding:24px 0;color:var(--muted);text-align:center}
+
+  /* How it works */
+  .steps{display:flex;gap:12px;flex-wrap:wrap}
+  .step{flex:1;min-width:180px;padding:14px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+  .step .num{font-family:var(--mono);font-weight:800;color:var(--accent1);background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;display:inline-block;margin-bottom:10px}
+
+  /* Booking modal / overlays */
+  .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:120}
+  .modal{width:460px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--shadow)}
+  .modal h4{margin:0 0 8px;color:var(--accent2)}
+  .muted-note{font-size:13px;color:var(--muted);margin-top:8px}
+
+  /* Thank you overlay/animation */
+  #confetti-canvas{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:130}
+  .thank-card{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:14px;text-align:center;border:1px solid rgba(255,255,255,0.03)}
+  .thank-card h2{color:var(--accent1);margin:0 0 8px}
+  .thank-card p{color:var(--muted);margin:6px 0 12px}
+
+  /* disabled button */
+  .btn.disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(18px);transition:all 600ms cubic-bezier(.2,.9,.3,1)}
+  .reveal.show{opacity:1;transform:none}
+
+  /* responsive */
+  @media (max-width:980px){
+    .hero{grid-template-columns:1fr;gap:18px}
+    nav{display:none}
+    .modal{width:92%}
+    .grid-3{grid-template-columns:1fr}
+    .steps{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="logo.jpg" alt="Satellite Housing logo" onerror="this.style.display='none'">
+    <div class="texts">
+      <div class="title">Satellite Housing</div>
+      <div class="subtitle">Civil Design & Drafting — Sourav Ghosh</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <nav>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#desire">Client Desire</a>
+      <a href="#cost">Cost</a>
+    </nav>
+
+    <button class="btn-ghost" id="adminBtn">Admin</button>
+    <button class="btn" id="contactBtn">Contact</button>
+  </div>
+</header>
+
+<main>
+  <div class="hero reveal" id="hero">
+    <div>
+      <h1>Your Dream House — Designed & Delivered in 28 Days</h1>
+      <p>Satellite Housing specialises in custom residential design packages — concept plans, construction drawings, and 3D visuals using AutoCAD & Revit. We combine functionality with aesthetics to produce build-ready drawings.</p>
+
+      <div class="cta" style="margin-top:18px">
+        <button class="btn" id="ctaQuote">Get a Quote</button>
+        <button class="btn-ghost" onclick="location.hash='#projects'">View Projects</button>
+      </div>
+
+      <div class="panel" style="margin-top:18px;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);display:inline-block">
+        <div style="font-weight:800;color:var(--accent2)">Fast Turnaround · Clear Drawings · Fair Pricing</div>
+        <div class="small" style="margin-top:6px">Delivery in <strong>28 days</strong> after start date. Transparent pricing ₹700/sq ft for drawing package.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div class="card" style="width:320px;height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:14px">
+        <img src="logo.jpg" alt="logo" style="max-height:84px;object-fit:contain" onerror="this.style.display='none'">
+        <div style="font-weight:800;margin-top:10px;color:var(--accent1)">Satellite Housing</div>
+        <div class="small" style="margin-top:6px">Design • Drafting • Site-ready drawings</div>
+      </div>
+
+      <div class="small" style="opacity:0.9">Blueprint-styled UI · Client-first workflow · Local support</div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <section class="reveal" id="how">
+    <h2 class="section-title">How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <div style="font-weight:700;margin-top:8px">Tell us your design</div>
+        <div class="small" style="margin-top:6px">Describe your requirements — rooms, style, special requests & preferred start date.</div>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <div style="font-weight:700;margin-top:8px">We create the drawings</div>
+        <div class="small" style="margin-top:6px">We prepare concept, plans, elevations and a full CAD package using AutoCAD/Revit.</div>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <div style="font-weight:700;margin-top:8px">Delivery & support</div>
+        <div class="small" style="margin-top:6px">Receive build-ready drawings within 28 days and our team supports clarifications.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+<section id="about" class="reveal">
+  <h2 class="section-title">About — Sourav Ghosh</h2>
+  <div class="card" style="display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:start">
+    <!-- LEFT: Your photo -->
+    <img src="sourav.jpg" alt="Sourav Ghosh" style="width:100%;border-radius:10px;object-fit:cover">
+    <!-- RIGHT: Text -->
+    <div>
+      <p class="small">
+        I am a Diploma in Civil Engineering student from A.P.C Ray Polytechnic with practical training in AutoCAD and Revit. 
+        Satellite Housing focuses on small-to-medium residential projects, delivering accurate and aesthetic drawings suited to local construction practices.
+      </p>
+      <p class="small" style="margin-top:10px">
+        We emphasise clear documentation, cost-aware design, and timely delivery. Each project receives dedicated attention to ensure layout efficiency and compliance with basic structural needs (detailed structural design should be done by a licensed engineer if required).
+      </p>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Services -->
+  <section class="reveal">
+    <h2 class="section-title">Services</h2>
+    <div class="grid-3" style="margin-top:12px">
+      <div class="feature">
+        <div style="font-weight:800;color:var(--accent2)">Concept Plans</div>
+        <div class="small" style="margin-top:8px">Multiple space arrangements and layout options to choose from.</div>
+      </div>
+      <div class="feature">
+        <div style="font-weight:800;color:var(--accent2)">CAD Drawings</div>
+        <div class="small" style="margin-top:8px">Accurate 2D construction drawings ready for builders.</div>
+      </div>
+      <div class="feature">
+        <div style="font-weight:800;color:var(--accent2)">3D Views</div>
+        <div class="small" style="margin-top:8px">Optional 3D visuals for design clarity and approvals.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="reveal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 class="section-title">Projects</h2>
+      <div>
+        <button class="btn-ghost" id="openAdminUpload">Admin Upload</button>
+      </div>
+    </div>
+
+    <div id="uploaderPanel" class="card" style="margin-top:12px;display:none">
+      <label>Project Title</label>
+      <input id="projTitle" placeholder="e.g., Modern bungalow — Revit model" />
+      <label style="margin-top:8px">Short description</label>
+      <input id="projDesc" placeholder="One-line summary" />
+      <label style="margin-top:8px">Upload image/file</label>
+      <input id="projFile" type="file" accept=".png,.jpg,.jpeg,.pdf" />
+      <div style="margin-top:10px;display:flex;gap:10px">
+        <button id="uploadProjBtn" class="btn">Upload</button>
+        <button id="clearProjectsBtn" class="btn-ghost">Clear All</button>
+      </div>
+      <div class="small" style="margin-top:8px">Files are stored in your browser (localStorage). For persistent hosting, connect a server later.</div>
+    </div>
+
+    <div class="projects-list" id="projectsList" style="margin-top:12px">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <!-- Client Desire -->
+  <section id="desire" class="reveal">
+    <h2 class="section-title">Client Desire</h2>
+    <div class="card">
+      <label>Describe your dream design</label>
+      <textarea id="clientDesign" rows="4" placeholder="Example: 3BHK, open kitchen, balcony, modern style..."></textarea>
+
+      <div class="row" style="margin-top:8px">
+        <div class="col">
+          <label>Preferred Start Date</label>
+          <input id="startDate" type="date" />
+        </div>
+        <div class="col">
+          <label>Auto End Date (28 days later)</label>
+          <input id="endDate" type="date" disabled />
+        </div>
+      </div>
+
+      <p class="small" style="margin-top:10px">Please provide clear details — it helps us estimate work and produce accurate drawings.</p>
+      <div style="margin-top:12px">
+        <button class="btn" id="toCostBtn">Next: Cost of Drawing</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cost -->
+  <section id="cost" class="reveal">
+    <h2 class="section-title">Cost of Drawing</h2>
+    <div class="card">
+      <div class="row">
+        <div class="col">
+          <label>Area (in sq ft)</label>
+          <input id="areaSqft" type="number" min="1" placeholder="e.g., 1200" />
+        </div>
+        <div style="width:210px">
+          <label>Rate (INR per sq ft)</label>
+          <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);font-weight:800;color:var(--accent1);text-align:center">₹700</div>
+        </div>
+      </div>
+
+      <label style="margin-top:12px">Total Price (INR)</label>
+      <input id="totalPrice" disabled placeholder="Auto-calculated" />
+
+      <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+        <button id="bookNowBtn" class="btn disabled">Book</button>
+        <button id="calcBtn" class="btn-ghost">Calculate</button>
+        <div class="small" style="margin-left:8px">Price = <strong>700 × area</strong></div>
+      </div>
+      <div class="small" style="margin-top:8px;color:var(--muted)">Note: Rate for drawing package is fixed at ₹700 per sq ft.</div>
+    </div>
+  </section>
+
+  <!-- Admin Panel -->
+  <section id="adminPanel" class="reveal" style="display:none">
+    <h2 class="section-title">Admin Panel — Bookings</h2>
+    <div class="card" id="bookingsList">
+      <!-- filled by JS -->
+    </div>
+  </section>
+
+  <footer style="margin-top:40px">
+    <div class="small">© Satellite Housing — Designed by Sourav Ghosh · Contact: +91 8617762863 · <a href="mailto:souravghosh1028@gmail.com">souravghosh1028@gmail.com</a></div>
+  </footer>
+</main>
+
+<!-- Booking modal -->
+<div class="overlay" id="bookingModal" aria-hidden="true" style="display:none">
+  <div class="modal">
+    <h4>Confirm Booking</h4>
+    <p class="muted">Provide contact details. Booking will be saved and visible in admin panel (admin only).</p>
+
+    <label style="margin-top:10px">Full Name</label>
+    <input id="bkName" placeholder="Your full name">
+
+    <label style="margin-top:8px">Phone Number</label>
+    <input id="bkPhone" placeholder="+91xxxxxxxxxx">
+
+    <label style="margin-top:8px">Email</label>
+    <input id="bkEmail" placeholder="you@example.com">
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px">
+      <button id="confirmBookBtn" class="btn">Confirm</button>
+      <button id="cancelBookBtn" class="btn-ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Thank you + confetti -->
+<canvas id="confetti-canvas"></canvas>
+<div class="overlay" id="thankOverlay" style="display:none;align-items:center;justify-content:center">
+  <div class="thank-card" style="text-align:center">
+    <h2>Thank you — Booking received!</h2>
+    <p class="muted">We will contact you soon to confirm details and next steps. Your project is in our queue.</p>
+    <div style="margin-top:12px">
+      <button id="backHomeBtn" class="btn">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* -----------------------------
+   Data keys and settings
+   ----------------------------- */
+const PROJECTS_KEY = 'satellite_projects_v_final2';
+const BOOKINGS_KEY  = 'satellite_bookings_v_final2';
+const ADMIN_PASSWORD = 'admin123'; // change before publishing
+const FIXED_RATE = 700; // fixed rate per sq ft
+
+/* -----------------------------
+   Simple helpers
+   ----------------------------- */
+const $ = id => document.getElementById(id);
+const show = el => { if(el) el.style.display = (el.tagName==='INPUT' ? '' : 'flex'); };
+const hide = el => { if(el) el.style.display = 'none'; };
+const byIdSetText = (id, txt) => { const e = $(id); if(e) e.textContent = txt; };
+
+function fmtINR(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
+
+/* -----------------------------
+   Reveal on scroll
+   ----------------------------- */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(en => {
+    if(en.isIntersecting) en.target.classList.add('show');
+  });
+},{threshold:0.12});
+revealEls.forEach(el => io.observe(el));
+
+/* -----------------------------
+   Contact button
+   ----------------------------- */
+$('contactBtn').addEventListener('click', ()=>{
+  const phone = '+91 8617762863';
+  const mail = 'souravghosh1028@gmail.com';
+  if(confirm(`Call ${phone} now? Press Cancel to email.`)){
+    window.location.href = `tel:${phone.replace(/\s+/g,'')}`;
+  } else {
+    window.location.href = `mailto:${mail}`;
+  }
+});
+
+/* -----------------------------
+   Projects: load, save, render
+   ----------------------------- */
+function loadProjects(){ return JSON.parse(localStorage.getItem(PROJECTS_KEY) || '[]'); }
+function saveProjects(arr){ localStorage.setItem(PROJECTS_KEY, JSON.stringify(arr)); }
+function renderProjects(){
+  const list = $('projectsList'); list.innerHTML = '';
+  const arr = loadProjects();
+  if(!arr.length){ list.innerHTML = '<div class="small">No projects yet. Admin can upload sample projects.</div>'; return; }
+  arr.forEach(p => {
+    const el = document.createElement('div'); el.className = 'project-item';
+    let html = '';
+    if(p.dataUrl && p.dataUrl.startsWith('data:image')){
+      html += `<img src="${p.dataUrl}" alt="${escapeHtml(p.title)}">`;
+    } else if(p.dataUrl && p.fileName){
+      html += `<div style="height:160px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));display:flex;align-items:center;justify-content:center;margin-bottom:8px">${escapeHtml(p.fileName)}</div>`;
+    }
+    html += `<div style="font-weight:800;color:var(--accent1)">${escapeHtml(p.title)}</div>`;
+    html += `<div class="small" style="margin-top:6px">${escapeHtml(p.desc||'')}</div>`;
+    el.innerHTML = html;
+    list.appendChild(el);
+  });
+}
+renderProjects();
+
+/* Admin upload */
+$('openAdminUpload').addEventListener('click', promptAdmin);
+$('adminBtn').addEventListener('click', promptAdmin);
+
+function promptAdmin(){
+  const pass = prompt('Enter admin password to access uploads & bookings:');
+  if(pass === ADMIN_PASSWORD){
+    // reveal uploader & admin panel
+    $('uploaderPanel').style.display = 'block';
+    $('adminPanel').style.display = 'block';
+    renderBookings();
+    alert('Admin logged in');
+  } else {
+    alert('Wrong password');
+  }
+}
+
+/* Upload handler */
+$('uploadProjBtn').addEventListener('click', async ()=>{
+  const title = $('projTitle').value.trim();
+  const desc  = $('projDesc').value.trim();
+  const file  = $('projFile').files[0];
+  if(!title){ alert('Please enter a title'); return; }
+  let dataUrl = '', fileName='';
+  if(file){
+    fileName = file.name;
+    dataUrl = await new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = () => rej();
+      fr.readAsDataURL(file);
+    });
+  }
+  const arr = loadProjects();
+  arr.unshift({title, desc, dataUrl, fileName, created: new Date().toISOString()});
+  saveProjects(arr);
+  renderProjects();
+  $('projTitle').value=''; $('projDesc').value=''; $('projFile').value='';
+});
+
+/* Clear projects - admin only */
+$('clearProjectsBtn')?.addEventListener('click', ()=> {
+  if(!confirm('Clear all projects from local storage?')) return;
+  localStorage.removeItem(PROJECTS_KEY);
+  renderProjects();
+});
+
+/* -----------------------------
+   Client Desire: end date auto
+   ----------------------------- */
+$('startDate').addEventListener('change', ()=>{
+  const v = $('startDate').value;
+  if(!v){ $('endDate').value = ''; return; }
+  const d = new Date(v); d.setDate(d.getDate()+28);
+  $('endDate').value = d.toISOString().slice(0,10);
+  toggleBookButton();
+});
+$('clientDesign').addEventListener('input', toggleBookButton);
+
+/* -----------------------------
+   Price calculation & Book enable/disable
+   ----------------------------- */
+function calculatePrice(){
+  const area = Number($('areaSqft').value) || 0;
+  const total = Math.round(area * FIXED_RATE);
+  $('totalPrice').value = total ? fmtINR(total) : '';
+  toggleBookButton();
+  return total;
+}
+$('areaSqft').addEventListener('input', calculatePrice);
+$('calcBtn').addEventListener('click', calculatePrice);
+
+// disable book until design, date, area present
+function toggleBookButton(){
+  const design = $('clientDesign').value.trim();
+  const date = $('startDate').value;
+  const area = Number($('areaSqft').value) || 0;
+  const btn = $('bookNowBtn');
+  if(design && date && area > 0){
+    btn.classList.remove('disabled'); btn.classList.remove('btn-ghost'); btn.classList.add('btn');
+    btn.disabled = false;
+    btn.style.pointerEvents = '';
+  } else {
+    btn.classList.add('disabled'); btn.disabled = true;
+    btn.style.pointerEvents = 'none';
+  }
+}
+// init disabled
+toggleBookButton();
+
+/* -----------------------------
+   Booking flow: modal & saving
+   ----------------------------- */
+$('toCostBtn').addEventListener('click', ()=>{
+  if(!$('clientDesign').value.trim() || !$('startDate').value){
+    alert('Please fill design description and preferred start date first.');
+    return;
+  }
+  location.hash='#cost';
+  window.scrollTo({top: document.querySelector('#cost').offsetTop - 80, behavior:'smooth'});
+});
+
+$('bookNowBtn').addEventListener('click', ()=>{
+  if($('bookNowBtn').classList.contains('disabled')) return;
+  $('bookingModal').style.display = 'flex';
+});
+$('cancelBookBtn').addEventListener('click', ()=> hide($('bookingModal')));
+
+$('confirmBookBtn').addEventListener('click', ()=>{
+  const name = $('bkName').value.trim();
+  const phone = $('bkPhone').value.trim();
+  const email = $('bkEmail').value.trim();
+  if(!name || !phone || !email){ alert('Please enter name, phone and email'); return; }
+
+  const booking = {
+    name, phone, email,
+    design: $('clientDesign').value.trim(),
+    startDate: $('startDate').value,
+    endDate: $('endDate').value,
+    area: $('areaSqft').value,
+    rate: FIXED_RATE,
+    price: calculatePrice(),
+    created: new Date().toISOString()
+  };
+  const arr = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+  arr.unshift(booking);
+  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(arr));
+
+  hide($('bookingModal'));
+  playConfettiThenShowThankYou();
+  if(document.querySelector('#adminPanel').style.display !== 'none') renderBookings();
+  // clear form lightly (keep design for records)
+  $('bkName').value=''; $('bkPhone').value=''; $('bkEmail').value='';
+});
+
+/* -----------------------------
+   Admin bookings rendering
+   ----------------------------- */
+function renderBookings(){
+  const arr = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+  const mount = $('bookingsList');
+  mount.innerHTML = '';
+  if(!arr.length){ mount.innerHTML = '<div class="small">No bookings yet.</div>'; return; }
+  arr.forEach(b => {
+    const el = document.createElement('div');
+    el.style.border = '1px solid rgba(255,255,255,0.04)';
+    el.style.padding = '10px';
+    el.style.marginBottom = '10px';
+    el.style.borderRadius = '8px';
+    el.innerHTML = `<div style="font-weight:800;color:var(--accent1)">${escapeHtml(b.name)}</div>
+      <div class="small" style="margin-top:6px">${escapeHtml(b.phone)} • ${escapeHtml(b.email)}</div>
+      <div class="small" style="margin-top:8px;color:var(--muted)">${escapeHtml(b.design)}</div>
+      <div class="small" style="margin-top:8px;color:var(--muted)">Start: ${escapeHtml(b.startDate)} — End: ${escapeHtml(b.endDate)} • Area: ${escapeHtml(b.area)} sqft • Price: ${b.price?fmtINR(b.price):'-'}</div>`;
+    mount.appendChild(el);
+  });
+}
+
+/* -----------------------------
+   Thank you + confetti animation
+   ----------------------------- */
+const confettiCanvas = $('confetti-canvas');
+let confettiCtx, confettiParticles = [], confettiAnimId = null;
+function setupConfetti(){
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  confettiCtx = confettiCanvas.getContext('2d');
+}
+window.addEventListener('resize', setupConfetti);
+setupConfetti();
+
+function startConfetti(){
+  confettiParticles = [];
+  const colors = ['#00c29a','#0093d0','#ffd166','#ff7b7b','#9ad3c7'];
+  for(let i=0;i<120;i++){
+    confettiParticles.push({
+      x: Math.random()*confettiCanvas.width,
+      y: Math.random()*confettiCanvas.height - confettiCanvas.height,
+      vx: (Math.random()-0.5)*4,
+      vy: Math.random()*4 + 2,
+      size: Math.random()*8 + 4,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rotation: Math.random()*360,
+      vr: (Math.random()-0.5)*8
+    });
+  }
+  cancelAnimationFrame(confettiAnimId);
+  let t=0;
+  function frame(){
+    t++;
+    confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    confettiParticles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.rotation += p.vr; p.vy += 0.03;
+      confettiCtx.save();
+      confettiCtx.translate(p.x,p.y);
+      confettiCtx.rotate(p.rotation * Math.PI / 180);
+      confettiCtx.fillStyle = p.color;
+      confettiCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      confettiCtx.restore();
+    });
+    if(t < 200) confettiAnimId = requestAnimationFrame(frame);
+    else { confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); }
+  }
+  frame();
+}
+
+function playConfettiThenShowThankYou(){
+  // show confetti for 2.5s then show thank overlay with animation
+  startConfetti();
+  $('confetti-canvas').style.display = 'block';
+  setTimeout(() => {
+    $('confetti-canvas').style.display = 'none';
+    show($('thankOverlay'));
+    // auto hide after 5s
+    setTimeout(()=>{ hide($('thankOverlay')); window.scrollTo({top:0,behavior:'smooth'}) }, 5000);
+  }, 2500);
+}
+
+$('backHomeBtn').addEventListener('click', ()=> { hide($('thankOverlay')); window.scrollTo({top:0,behavior:'smooth'}); });
+
+/* -----------------------------
+   Utilities
+   ----------------------------- */
+function escapeHtml(str){ if(!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* initialize UI states */
+$('uploaderPanel').style.display = 'none';
+$('adminPanel').style.display = 'none';
+$('bookingModal').style.display = 'none';
+$('thankOverlay').style.display = 'none';
+$('confetti-canvas').style.display = 'none';
+$('confetti-canvas').style.position = 'fixed';
+
+/* ensure book button disabled on load */
+$('bookNowBtn').classList.add('disabled'); $('bookNowBtn').disabled = true; $('bookNowBtn').style.pointerEvents = 'none';
+
+/* keyboard shortcut for admin */
+document.addEventListener('keydown', (e)=> { if(e.key.toLowerCase() === 'u') promptAdmin(); });
+
+/* initial render */
+renderProjects();
+
+</script>
+</body>
+</html>
